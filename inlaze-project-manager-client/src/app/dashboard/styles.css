@@ -1,0 +1,9 @@
+body {
+  width: 100dvw;
+  height: 100dvh;
+  background: #55a599;
+}
+
+.content--title {
+  border-radius: 1.5rem;
+}
