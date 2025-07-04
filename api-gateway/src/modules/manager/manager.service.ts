@@ -18,13 +18,15 @@ import { NotifierService } from '../notifier/notifier.service';
 
 @Injectable()
 export class ManagerService {
-  domainName: string = 'DOMAIN_MANAGER';
+  logger: Logger;
+  domainName: string = process.env.DOMAIN_MANAGER!;
   constructor(
     private readonly httpService: HttpService,
     private readonly configService: ConfigService,
-    private readonly logger: Logger,
     private readonly notifierService: NotifierService,
-  ) {}
+  ) {
+    this.logger = new Logger(ManagerService.name);
+  }
 
   get domain(): string {
     return this.configService.get<string>(this.domainName) as string;

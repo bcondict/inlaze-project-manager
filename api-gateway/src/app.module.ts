@@ -5,7 +5,9 @@ import { ConfigModule } from '@nestjs/config';
 
 @Module({
   imports: [
-    HttpModule,
+    HttpModule.register({
+      global: true,
+    }),
     ConfigModule.forRoot({
       isGlobal: true,
       envFilePath: '.env',

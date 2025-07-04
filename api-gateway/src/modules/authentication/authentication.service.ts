@@ -9,21 +9,20 @@ import { ConfigService } from '@nestjs/config';
 import { JwtResponseScheme } from './schemes/jwt-response.scheme';
 import { plainToInstance } from 'class-transformer';
 import { validateOrReject } from 'class-validator';
-import { loginCatchError } from './interceptors/login.interceptor';
 import { AxiosResponse } from 'axios';
-import { RegisterScheme } from './schemes/register.scheme';
-import { registerCatchError } from './interceptors/register.interceptor';
 import { HttpException } from '@nestjs/common';
 import { UserResponseScheme } from './schemes/user-response.scheme';
 
 @Injectable()
 export class AuthenticationService {
-  domainName: string = 'DOMAIN_AUTH';
+  domainName: string = process.env.DOMAIN_AUTH!;
+  logger: Logger;
   constructor(
-    private readonly logger = new Logger(AuthenticationService.name),
     private readonly httpService: HttpService,
     private readonly configService: ConfigService,
-  ) {}
+  ) {
+    this.logger = new Logger(AuthenticationService.name);
+  }
 
   private get domain(): string {
     const authDomain = this.configService.get<string>(this.domainName);
@@ -43,11 +42,9 @@ export class AuthenticationService {
     };
 
     const response = await firstValueFrom<AxiosResponse>(
-      this.httpService
-        .post(`${this.domain}/api/v1/login`, user2login, {
-          params: { save: false },
-        })
-        .pipe(loginCatchError(this.logger)),
+      this.httpService.post(`${this.domain}/api/v1/login`, user2login, {
+        params: { save: false },
+      }),
     );
 
     const jwtResponse = plainToInstance(JwtResponseScheme, response.data);
@@ -66,17 +63,19 @@ export class AuthenticationService {
     return jwtResponse;
   }
 
-  async register(registerPayload: RegisterScheme): Promise<UserResponseScheme> {
+  async register(
+    registerPayload: UserResponseScheme,
+  ): Promise<UserResponseScheme> {
     this.logger.log(`Attempting to register user: ${registerPayload.email}`);
     try {
+      console.log('before error');
       const response = await firstValueFrom<AxiosResponse<UserResponseScheme>>(
-        this.httpService
-          .post<UserResponseScheme>(
-            `${this.domain}/api/v1/register`,
-            registerPayload,
-          )
-          .pipe(registerCatchError(this.logger)),
+        this.httpService.post<UserResponseScheme>(
+          `${this.domain}/api/v1/auth/register`,
+          registerPayload,
+        ),
       );
+      this.logger.log('after error');
 
       const userRegisteredResponse = plainToInstance(
         UserResponseScheme,
