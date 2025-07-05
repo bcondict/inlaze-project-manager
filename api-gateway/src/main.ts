@@ -1,9 +1,11 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { VersioningType } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+  const configService = app.get(ConfigService);
 
   app.setGlobalPrefix('api');
   app.enableVersioning({ type: VersioningType.URI, prefix: 'v' });
@@ -19,10 +21,13 @@ async function bootstrap() {
   // console.log('routes', routes);
 
   app.enableCors({
-    origin: true,
+    origin: configService.get('cors.origin') || true,
+    credentials: true,
   });
 
-  await app.listen(process.env.PORT ?? 3000);
+  const port = configService.get('port') || 3000;
+  await app.listen(port);
   console.log(`Application is running on: ${await app.getUrl()}`);
+  console.log(`Environment: ${configService.get('nodeEnv')}`);
 }
 void bootstrap();

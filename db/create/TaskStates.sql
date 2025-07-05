@@ -1,0 +1,8 @@
+CREATE TABLE IF NOT EXISTS `TaskStates` (
+  `id` VARCHAR(36) PRIMARY KEY,
+  `taskId` VARCHAR(36),
+  `state` ENUM('todo', 'in progress', 'completed'),
+  `createdAt` DATETIME DEFAULT CURRENT_TIMESTAMP,
+  `updatedAt` DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  CONSTRAINT `fk_taskstates_task` FOREIGN KEY (`taskId`) REFERENCES `Tasks`(`id`) ON DELETE CASCADE
+); 

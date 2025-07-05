@@ -9,7 +9,7 @@ import {
 } from 'typeorm';
 import { TaskEntity } from './task.entity';
 
-@Entity('taskState')
+@Entity('TaskStates')
 export class TaskStateEntitiy {
   @PrimaryColumn({ generated: 'uuid' })
   id: string;

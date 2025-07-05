@@ -9,7 +9,7 @@ import {
 import { TaskEntity } from '../task/task.entity';
 import { IProject } from './project.interface';
 
-@Entity('project')
+@Entity('Projects')
 export class ProjectEntitiy implements IProject {
   @PrimaryColumn({ generated: 'uuid' })
   id: string;

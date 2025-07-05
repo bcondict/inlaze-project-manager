@@ -33,23 +33,34 @@ export class CommentService {
 
     await queryRunner.connect();
 
-    const comments = queryRunner.manager.find(CommentEntity, {
-      where: { taskId },
-    });
-
-    await queryRunner.release();
-    return comments;
+    try {
+      const comments = await queryRunner.manager.find(CommentEntity, {
+        where: { taskId },
+      });
+      this.logger.log(`Found ${comments.length} comments for task ${taskId}`);
+      return comments;
+    } catch (error) {
+      this.logger.error(`Error reading task comments: ${error.message}`);
+      throw error;
+    } finally {
+      await queryRunner.release();
+    }
   }
 
   async readComment(commentId: string): Promise<CommentEntity> {
     const queryRunner = this.dataSource.createQueryRunner();
     await queryRunner.connect();
 
-    const task = await queryRunner.manager.findOneOrFail(CommentEntity, {
-      where: { id: commentId },
-    });
-
-    await queryRunner.release();
-    return task;
+    try {
+      const comment = await queryRunner.manager.findOneOrFail(CommentEntity, {
+        where: { id: commentId },
+      });
+      return comment;
+    } catch (error) {
+      this.logger.error(`Error reading comment ${commentId}: ${error.message}`);
+      throw error;
+    } finally {
+      await queryRunner.release();
+    }
   }
 }

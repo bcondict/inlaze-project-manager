@@ -34,12 +34,19 @@ export class TaskService {
 
     await queryRunner.connect();
 
-    const tasks = queryRunner.manager.find(TaskEntity, {
-      where: { projectId },
-    });
+    try {
+      const tasks = await queryRunner.manager.find(TaskEntity, {
+        where: { projectId },
+      });
 
-    await queryRunner.release();
-    return tasks;
+      this.logger.log(`Found ${tasks.length} tasks for project ${projectId}`);
+      return tasks;
+    } catch (error) {
+      this.logger.error(`Error reading project tasks: ${error.message}`);
+      throw error;
+    } finally {
+      await queryRunner.release();
+    }
   }
 
   async readTask(taskId: string): Promise<TaskEntity> {

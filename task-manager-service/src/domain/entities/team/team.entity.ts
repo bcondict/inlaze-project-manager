@@ -9,7 +9,7 @@ import {
 import { TeamInterface } from './team.interface';
 import { UserTeamEntitiy } from '../userTeam/userTeam.entity';
 
-@Entity('team')
+@Entity('Teams')
 export class TeamEntitiy implements TeamInterface {
   @PrimaryColumn({ generated: 'uuid' })
   id: string;

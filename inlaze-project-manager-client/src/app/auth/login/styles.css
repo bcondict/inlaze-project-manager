@@ -1,8 +1,3 @@
-body {
-  background: #55a599;
-  height: 100dvh;
-  width: 100dvw;
-}
 
 .container {
   max-width: unset; /* required to remove nextjs css limits, i did find where remove those css files */
@@ -15,7 +10,6 @@ body {
   width: 50%;
   background: #edfaf8;
   border-radius: 1rem;
-  border: 1px solid;
   padding: 2rem;
 
   box-shadow: -50px 60px 70px -20px #1e1a1a;

@@ -4,11 +4,11 @@ import { TaskService } from './task.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { TaskEntity } from 'src/domain/entities/task/task.entity';
 import { TaskStateService } from '../task-state/task-state.service';
-import { CommentService } from '../comment/comment.service';
+import { CommentModule } from '../comment/comment.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([TaskEntity])],
+  imports: [TypeOrmModule.forFeature([TaskEntity]), CommentModule],
   controllers: [TaskController],
-  providers: [TaskService, TaskStateService, CommentService],
+  providers: [TaskService, TaskStateService],
 })
 export class TaskModule {}

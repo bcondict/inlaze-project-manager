@@ -13,7 +13,7 @@ import { CommentEntity } from '../comment/comment.entity';
 import { UserInterface } from './user.interface';
 import { UserTeamEntitiy } from '../userTeam/userTeam.entity';
 
-@Entity('user')
+@Entity('Users')
 export class UserEntity implements UserInterface {
   @PrimaryColumn({ generated: 'uuid' })
   id: string;

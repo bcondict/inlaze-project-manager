@@ -28,5 +28,5 @@ export class TaskScheme {
   createdAt: Date;
 
   @IsDate({ message: 'Date of update must a valid date.' })
-  UpdatedAt: Date;
+  updatedAt: Date;
 }

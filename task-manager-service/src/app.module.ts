@@ -14,10 +14,10 @@ import typeOrmConfig from './config/configuration';
       isGlobal: true,
       envFilePath: '.env',
     }),
+    TypeOrmModule.forRoot(typeOrmConfig),
     InfrastructureModule,
     UseCasesModule,
     DomainModule,
-    TypeOrmModule.forRoot(typeOrmConfig),
     ModulesModule,
   ],
 })

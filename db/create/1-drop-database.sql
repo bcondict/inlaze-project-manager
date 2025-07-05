@@ -1,0 +1,1 @@
+DROP DATABASE IF EXISTS `inlaze_project_manager`; 

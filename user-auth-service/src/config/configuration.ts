@@ -6,7 +6,7 @@ import { UserEntity } from 'src/domian/entities/user/user.entity';
 import { UserTeamEntitiy } from 'src/domian/entities/userTeam/userTeam.entity';
 
 const typeOrmConfig: TypeOrmModuleOptions = {
-  type: process.env.DB_TYPE as 'mysql',
+  type: 'mysql',
   host: process.env.DB_HOST! ?? 'localhost',
   port: parseInt(process.env.DB_PORT!, 10) ?? 3306,
   database: process.env.DB_NAME! ?? 'inlaze_project_manager',

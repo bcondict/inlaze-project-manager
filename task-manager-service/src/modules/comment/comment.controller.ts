@@ -14,6 +14,13 @@ export class CommentController {
   async readComment(
     @Param('commentId') commentId: string,
   ): Promise<CommentEntity> {
-    return this.readComment(commentId);
+    return this.commentService.readComment(commentId);
+  }
+
+  @Get('/task/:taskId')
+  async readTaskComments(
+    @Param('taskId') taskId: string,
+  ): Promise<CommentEntity[]> {
+    return this.commentService.readTaskComments(taskId);
   }
 }

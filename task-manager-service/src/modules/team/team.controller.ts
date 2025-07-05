@@ -7,13 +7,13 @@ export class TeamController {
   constructor(private readonly teamService: TeamService) {}
 
   @Get()
-  async createTeam(@Body() team: TeamEntitiy): Promise<TeamEntitiy> {
-    return this.teamService.createTeam(team);
+  async readTeams(): Promise<TeamEntitiy[]> {
+    return this.teamService.readTeams();
   }
 
   @Post()
-  async readTeams(): Promise<TeamEntitiy[]> {
-    return this.teamService.readTeams();
+  async createTeam(@Body() team: TeamEntitiy): Promise<TeamEntitiy> {
+    return this.teamService.createTeam(team);
   }
 
   @Get('/:teamId')

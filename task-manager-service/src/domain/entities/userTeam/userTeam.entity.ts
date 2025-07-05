@@ -11,7 +11,7 @@ import { UserTeamInterface } from './userTeam.interface';
 import { UserEntity } from '../user/user.entity';
 import { TeamEntitiy } from '../team/team.entity';
 
-@Entity('userTeam')
+@Entity('UserTeams')
 export class UserTeamEntitiy implements UserTeamInterface {
   @PrimaryColumn({ generated: 'uuid' })
   id: string;

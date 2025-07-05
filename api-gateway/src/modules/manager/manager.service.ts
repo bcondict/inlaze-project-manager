@@ -18,18 +18,23 @@ import { NotifierService } from '../notifier/notifier.service';
 
 @Injectable()
 export class ManagerService {
-  logger: Logger;
-  domainName: string = process.env.DOMAIN_MANAGER!;
+  private readonly logger = new Logger(ManagerService.name);
+  
   constructor(
     private readonly httpService: HttpService,
     private readonly configService: ConfigService,
     private readonly notifierService: NotifierService,
-  ) {
-    this.logger = new Logger(ManagerService.name);
-  }
+  ) {}
 
-  get domain(): string {
-    return this.configService.get<string>(this.domainName) as string;
+  private get domain(): string {
+    const taskManagerUrl = this.configService.get<string>('microservices.taskManager');
+    if (!taskManagerUrl) {
+      this.logger.error('Task Manager service URL is not configured.');
+      throw new InternalServerErrorException(
+        'Task Manager domain not configured.',
+      );
+    }
+    return taskManagerUrl;
   }
 
   /* projects */
@@ -57,14 +62,29 @@ export class ManagerService {
 
     const projectsResponse = plainToInstance(ProjectScheme, response.data);
 
-    await validateOrReject(projectsResponse).catch((error) => {
-      this.logger.error(
-        `Invalid lecture projects schema from manager service: ${JSON.stringify(error)}`,
-      );
-      throw new InternalServerErrorException(
-        'Invalid lecture projects schema.',
-      );
-    });
+    // Validate each project in the array
+    if (Array.isArray(projectsResponse)) {
+      for (const project of projectsResponse) {
+        await validateOrReject(project).catch((error) => {
+          this.logger.error(
+            `Invalid project schema in projects list: ${JSON.stringify(error)}`,
+          );
+          throw new InternalServerErrorException(
+            'Invalid project schema in projects list.',
+          );
+        });
+      }
+    } else {
+      // If it's not an array, validate as single object
+      await validateOrReject(projectsResponse).catch((error) => {
+        this.logger.error(
+          `Invalid lecture projects schema from manager service: ${JSON.stringify(error)}`,
+        );
+        throw new InternalServerErrorException(
+          'Invalid lecture projects schema.',
+        );
+      });
+    }
 
     return projectsResponse;
   }
@@ -77,17 +97,39 @@ export class ManagerService {
       ),
     );
 
-    const projectsResponse = plainToInstance(TaskScheme, response.data);
-    await validateOrReject(projectsResponse).catch((error) => {
-      this.logger.error(
-        `Invalid lecture project tasks schema from manager service: ${JSON.stringify(error)}`,
-      );
-      throw new InternalServerErrorException(
-        'Invalid lecture project tasks schema.',
-      );
-    });
+    this.logger.log(`Raw response from Task Manager: ${JSON.stringify(response.data)}`);
 
-    return projectsResponse;
+    const tasksResponse = plainToInstance(TaskScheme, response.data);
+    
+    this.logger.log(`Transformed response: ${JSON.stringify(tasksResponse)}`);
+    
+    // Validate each task in the array
+    if (Array.isArray(tasksResponse)) {
+      this.logger.log(`Validating ${tasksResponse.length} tasks`);
+      for (const task of tasksResponse) {
+        await validateOrReject(task).catch((error) => {
+          this.logger.error(
+            `Invalid task schema in project tasks: ${JSON.stringify(error)}`,
+          );
+          throw new InternalServerErrorException(
+            'Invalid task schema in project tasks.',
+          );
+        });
+      }
+    } else {
+      // If it's not an array, validate as single object
+      this.logger.log('Validating single task object');
+      await validateOrReject(tasksResponse).catch((error) => {
+        this.logger.error(
+          `Invalid lecture project tasks schema from manager service: ${JSON.stringify(error)}`,
+        );
+        throw new InternalServerErrorException(
+          'Invalid lecture project tasks schema.',
+        );
+      });
+    }
+
+    return tasksResponse;
   }
   async createTask(projectId: string, task: TaskScheme): Promise<TaskScheme> {
     const response = await firstValueFrom(
@@ -173,12 +215,26 @@ export class ManagerService {
     );
 
     const teamsResponse = plainToInstance(TeamScheme, response.data);
-    await validateOrReject(teamsResponse).catch((error) => {
-      this.logger.error(
-        `Invalid lecture of teams schema from manager service: ${JSON.stringify(error)}`,
-      );
-      throw new InternalServerErrorException('Invalid lecture of team schema.');
-    });
+    
+    // Validate each team in the array
+    if (Array.isArray(teamsResponse)) {
+      for (const team of teamsResponse) {
+        await validateOrReject(team).catch((error) => {
+          this.logger.error(
+            `Invalid team schema in teams list: ${JSON.stringify(error)}`,
+          );
+          throw new InternalServerErrorException('Invalid team schema in teams list.');
+        });
+      }
+    } else {
+      // If it's not an array, validate as single object
+      await validateOrReject(teamsResponse).catch((error) => {
+        this.logger.error(
+          `Invalid lecture of teams schema from manager service: ${JSON.stringify(error)}`,
+        );
+        throw new InternalServerErrorException('Invalid lecture of team schema.');
+      });
+    }
 
     return teamsResponse;
   }
@@ -258,14 +314,30 @@ export class ManagerService {
     );
 
     const commentsResponse = plainToInstance(CommentScheme, response.data);
-    await validateOrReject(commentsResponse).catch((error) => {
-      this.logger.error(
-        `Invalid lecture comments schema from manager service: ${JSON.stringify(error)}`,
-      );
-      throw new InternalServerErrorException(
-        'Invalid lecture of comments schema.',
-      );
-    });
+    
+    // Validate each comment in the array
+    if (Array.isArray(commentsResponse)) {
+      for (const comment of commentsResponse) {
+        await validateOrReject(comment).catch((error) => {
+          this.logger.error(
+            `Invalid comment schema in comments list: ${JSON.stringify(error)}`,
+          );
+          throw new InternalServerErrorException(
+            'Invalid comment schema in comments list.',
+          );
+        });
+      }
+    } else {
+      // If it's not an array, validate as single object
+      await validateOrReject(commentsResponse).catch((error) => {
+        this.logger.error(
+          `Invalid lecture comments schema from manager service: ${JSON.stringify(error)}`,
+        );
+        throw new InternalServerErrorException(
+          'Invalid lecture of comments schema.',
+        );
+      });
+    }
 
     return commentsResponse;
   }

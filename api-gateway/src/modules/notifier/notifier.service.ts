@@ -26,7 +26,6 @@ class NotificationResponseScheme {
 @Injectable()
 export class NotifierService {
   private readonly logger: Logger = new Logger(NotifierService.name);
-  private readonly NOTIFIER_DOMAIN: string = 'NOTIFIER_MICROSERVICE_URL';
 
   constructor(
     private readonly httpService: HttpService,
@@ -34,16 +33,14 @@ export class NotifierService {
   ) {}
 
   private get domain(): string {
-    const url = this.configService.get<string>(this.NOTIFIER_DOMAIN);
-    if (!url) {
-      this.logger.error(
-        `Configuration for '${this.NOTIFIER_DOMAIN}' is missing.`,
-      );
+    const notifierUrl = this.configService.get<string>('microservices.taskNotifier');
+    if (!notifierUrl) {
+      this.logger.error('Task Notifier service URL is not configured.');
       throw new InternalServerErrorException(
         'Notification microservice URL is not configured.',
       );
     }
-    return url;
+    return notifierUrl;
   }
 
   async newComment(

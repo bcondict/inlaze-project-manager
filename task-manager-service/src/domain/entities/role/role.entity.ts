@@ -9,7 +9,7 @@ import {
 import { UserEntity } from '../user/user.entity';
 import { IRole } from './role.interface';
 
-@Entity('role')
+@Entity('Roles')
 export class RoleEntitiy implements IRole {
   @PrimaryColumn({ generated: 'uuid' })
   id: string;

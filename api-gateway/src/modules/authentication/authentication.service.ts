@@ -15,19 +15,17 @@ import { UserResponseScheme } from './schemes/user-response.scheme';
 
 @Injectable()
 export class AuthenticationService {
-  domainName: string = process.env.DOMAIN_AUTH!;
-  logger: Logger;
+  private readonly logger = new Logger(AuthenticationService.name);
+  
   constructor(
     private readonly httpService: HttpService,
     private readonly configService: ConfigService,
-  ) {
-    this.logger = new Logger(AuthenticationService.name);
-  }
+  ) {}
 
   private get domain(): string {
-    const authDomain = this.configService.get<string>(this.domainName);
+    const authDomain = this.configService.get<string>('microservices.userAuth');
     if (!authDomain) {
-      this.logger.error(`Configuration for ${this.domainName} is missing.`);
+      this.logger.error('Authentication service URL is not configured.');
       throw new InternalServerErrorException(
         'Authentication domain not configured.',
       );

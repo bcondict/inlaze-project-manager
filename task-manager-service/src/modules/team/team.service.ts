@@ -34,21 +34,32 @@ export class TeamService {
 
     await queryRunner.connect();
 
-    const teams = queryRunner.manager.find(TeamEntitiy);
-
-    await queryRunner.release();
-    return teams;
+    try {
+      const teams = await queryRunner.manager.find(TeamEntitiy);
+      this.logger.log(`Found ${teams.length} teams`);
+      return teams;
+    } catch (error) {
+      this.logger.error(`Error reading teams: ${error.message}`);
+      throw error;
+    } finally {
+      await queryRunner.release();
+    }
   }
 
   async readTeam(teamId: string): Promise<TeamEntitiy> {
     const queryRunner = this.dataSource.createQueryRunner();
     await queryRunner.connect();
 
-    const team = await queryRunner.manager.findOneOrFail(TeamEntitiy, {
-      where: { id: teamId },
-    });
-
-    await queryRunner.release();
-    return team;
+    try {
+      const team = await queryRunner.manager.findOneOrFail(TeamEntitiy, {
+        where: { id: teamId },
+      });
+      return team;
+    } catch (error) {
+      this.logger.error(`Error reading team ${teamId}: ${error.message}`);
+      throw error;
+    } finally {
+      await queryRunner.release();
+    }
   }
 }

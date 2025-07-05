@@ -35,9 +35,16 @@ export class ProjectService {
 
     await queryRunner.connect();
 
-    const projects = await queryRunner.manager.find(ProjectEntitiy);
-
-    return projects;
+    try {
+      const projects = await queryRunner.manager.find(ProjectEntitiy);
+      this.logger.log(`Found ${projects.length} projects`);
+      return projects;
+    } catch (error) {
+      this.logger.error(`Error reading projects: ${error.message}`);
+      throw error;
+    } finally {
+      await queryRunner.release();
+    }
   }
 
   async readProject(projectId: string): Promise<ProjectEntitiy> {
@@ -45,11 +52,16 @@ export class ProjectService {
 
     await queryRunner.connect();
 
-    const projects = await queryRunner.manager.findOneOrFail(ProjectEntitiy, {
-      where: { id: projectId },
-    });
-
-    await queryRunner.release();
-    return projects;
+    try {
+      const project = await queryRunner.manager.findOneOrFail(ProjectEntitiy, {
+        where: { id: projectId },
+      });
+      return project;
+    } catch (error) {
+      this.logger.error(`Error reading project ${projectId}: ${error.message}`);
+      throw error;
+    } finally {
+      await queryRunner.release();
+    }
   }
 }

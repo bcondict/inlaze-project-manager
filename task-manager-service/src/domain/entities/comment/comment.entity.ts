@@ -11,7 +11,7 @@ import { UserEntity } from '../user/user.entity';
 import { TaskEntity } from '../task/task.entity';
 import { CommentInterface } from './comment.interface';
 
-@Entity('comments')
+@Entity('Commentaries')
 export class CommentEntity implements CommentInterface {
   @PrimaryColumn({ generated: 'uuid' })
   id: string;

@@ -13,7 +13,7 @@ import { CommentEntity } from '../comment/comment.entity';
 import { TaskStateEntitiy } from './taskState.entity';
 import { TaskInterface } from './task.interface';
 
-@Entity('task')
+@Entity('Tasks')
 export class TaskEntity implements TaskInterface {
   @PrimaryColumn({ generated: 'uuid' })
   id: string;
